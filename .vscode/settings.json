@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "..\\printerenv\\Scripts\\python.exe",
+    "python.venvPath": "..\\printerenv",
+    "python.linting.pylintEnabled": true
+}

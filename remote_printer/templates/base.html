@@ -1,0 +1,88 @@
+{% load static i18n %}
+<!-- {# {% spaceless %} #}-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}news_aggregator{% endblock title %}</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Google Icon -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <!-- Font Awesome 5 -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <link rel="icon" href="{% static 'images/favicon/favicon.ico' %}">
+
+    {% block css %}{% endblock css %}
+
+    <!-- This file stores project-specific CSS -->
+
+    <link href="{% static 'css/project.css' %}" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="mb-1">
+      {% include "navbar.html" %}
+    </div>
+
+    <div class="container">
+
+      {% if messages %}
+        {% for message in messages %}
+          {% if message.tags == 'error' %}
+            <div class='alert alert-danger alert-dismissible fade show'>
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              {{message}}
+            </div>
+          {% else %}
+            <div class='alert alert-{{ message.tags }} alert-dismissible fade show'>
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <h4 class="alert-heading">{{ message.tags }}!</h4>
+              {{message}}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% block bodycontent %}
+        <p>Use this document as a way to quick start any new project.</p>
+      {% endblock bodycontent %}
+
+    </div> <!-- /container -->
+
+    {% block modal %}{% endblock modal %}
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+
+      <!-- Bootstrap JS and its dependencies-->
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+      <!-- place project specific Javascript in this file -->
+
+      <script src="{% static 'js/project.js' %}"></script>
+    {% block javascript %}{% endblock javascript %}
+  </body>
+</html>
+<!-- {# {% endspaceless %} #}-->

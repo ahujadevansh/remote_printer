@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Login
+{% endblock title %}
+{% block bodycontent %}
+    <div class="container">
+        {% if form.is_multipart %}
+            <form enctype="multipart/form-data" method="post">
+        {% else %}
+            <form method="post">
+        {% endif %}
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class='border-bottom mb-2 '>Login</legend>
+                {{form|crispy}}
+            </fieldset>
+            <div class='form-group mx-auto'>
+                <input class='btn btn-outline-primary' type="submit" value="Login">
+                <a class="text-muted mx-3" href="{% url 'users:password_reset' %}">Forget password?</a>
+            </div>
+            <div class="border-top pt-3">
+                    <small class="text-muted">
+                        Don't Have An Account? <a class="ml-2" href="{% url 'users:register'  %}">Regiter Now</a>
+                    </small>
+            </div>
+        </form>
+    </div>
+{% endblock bodycontent %}

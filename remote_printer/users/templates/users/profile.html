@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    profile
+{% endblock title %}
+
+{% block css %}
+  <link href="{% static 'users/css/profile.css' %}" rel="stylesheet">
+{% endblock css %}
+
+{% block bodycontent %}
+
+    <div class="container">
+        <div class="media border rounded shadow p-3 m-2">
+            <img class="img-thumbnail rounded-circle img-fluid" style="height:125px;width:125px" src="{{ user.profile_pic.url }}" alt="user profile pic">
+            <div class="media-body p-4">
+                <h2>{{user.first_name|title}} {{user.last_name|title}}</h2>
+                <p>{{ user.email }}</p>
+            </div>
+        </div>
+
+
+        {% if form.is_multipart %}
+            <form enctype="multipart/form-data" method="post">
+        {% else %}
+            <form method="post">
+        {% endif %}
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class='border-bottom mb-2 '>About</legend>
+                {{form|crispy}}
+            </fieldset>
+            <div class='form-group mx-auto'>
+                <button class='btn btn-outline-primary'><i class="fas fa-edit"></i> Update</button>
+            </div>
+        </form>
+    </div>
+{% endblock bodycontent %}

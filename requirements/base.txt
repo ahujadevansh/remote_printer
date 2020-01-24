@@ -1,0 +1,28 @@
+argon2-cffi==19.2.0  # https://github.com/hynek/argon2_cffi
+asgiref==3.2.3
+astroid==2.3.3
+colorama==0.4.3
+gitdb2==2.0.6
+GitPython==3.0.5
+isort==4.3.21
+lazy-object-proxy==1.4.3
+lint==1.2.1
+mccabe==0.6.1
+mysqlclient==1.4.6
+Pillow==7.0.0
+pylint==2.4.4
+python-slugify==4.0.0  # https://github.com/un33k/python-slugify
+pytz==2019.3
+six==1.13.0
+smmap2==2.0.5
+sqlparse==0.3.0
+typed-ast==1.4.0
+whitenoise==5.0.1  # https://github.com/evansd/whitenoise
+wrapt==1.11.2
+
+
+# Django
+# ------------------------------------------------------------------------------
+django==2.2.9  # pyup: < 3.0  # https://www.djangoproject.com/
+django-crispy-forms==1.8.1  # https://github.com/django-crispy-forms/django-crispy-forms
+
