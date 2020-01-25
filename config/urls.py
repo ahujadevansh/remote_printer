@@ -23,7 +23,6 @@ from django.views.generic import RedirectView, TemplateView
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
-
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path('favicon.ico/', RedirectView.as_view(url='/static/images/favicon/favicon.ico'), name='favion'),
     path(
@@ -47,6 +46,7 @@ urlpatterns = [
         name='password_reset_complete',
     ),
     path('users/', include(f'{settings.APP_NAME}.users.urls', namespace='users')),
+    path('printer/', include('printer.urls', namespace='printer')),
 ]
 
 if settings.DEBUG:

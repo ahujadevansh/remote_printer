@@ -25,4 +25,5 @@ wrapt==1.11.2
 # ------------------------------------------------------------------------------
 django==2.2.9  # pyup: < 3.0  # https://www.djangoproject.com/
 django-crispy-forms==1.8.1  # https://github.com/django-crispy-forms/django-crispy-forms
+django-tinymce4-lite==1.7.5
 

@@ -50,11 +50,13 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "crispy_forms",
+    "tinymce"
 ]
 
 LOCAL_APPS = [
-    APP_NAME+".users.apps.UsersConfig",
-    # Your stuff: custom apps go here
+    f"{APP_NAME}.users.apps.UsersConfig",
+    "printer.apps.PrinterConfig",
+    "core.apps.CoreConfig"
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
