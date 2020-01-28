@@ -45,6 +45,7 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(),
         name='password_reset_complete',
     ),
+    path('tinymce/', include('tinymce.urls')),
     path('users/', include(f'{settings.APP_NAME}.users.urls', namespace='users')),
     path('printer/', include('printer.urls', namespace='printer')),
 ]

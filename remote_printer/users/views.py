@@ -21,10 +21,11 @@ def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            form.instance.user_type = 2
+            user = form.save()
             email = form.cleaned_data.get('email')
             messages.success(request, f"{email} registered sucessfully. Log in to continue")
-            return redirect('users_login')
+            return redirect(user)
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form':form})

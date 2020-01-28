@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+   Print Request
+{% endblock title %}
+
+{% block css %}
+  <link href="{% static 'printer/css/form.css' %}" rel="stylesheet">
+  {{ form.media }}
+{% endblock css %}
+
+
+{% block bodycontent %}
+  <div class="container">
+
+      <form enctype="multipart/form-data" method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class='border-bottom mb-2 '>Print</legend>
+            {{print_request_form.media}}
+            {{print_request_form|crispy}}
+            {{ formset.management_form }}
+            <input type="button" class="btn btn-success m-2 float-right" value="Add More" id="add_more">
+            <div class="mt-5" id="form_set">
+              {% for form in formset %}
+                {{ form|crispy }}
+              {% endfor %}
+            </div>
+        </fieldset>
+        <div class='form-group'>
+            <button type="submit" class='btn btn-block btn-primary'>Print</button>
+        </div>
+    </form>
+    <div id="empty_form" style="display:none">
+        {{ formset.empty_form|crispy }}
+    </div>
+  </div>
+{% endblock bodycontent %}
+
+
+{% block javascript %}
+<script>
+  $(document).ready(function(){
+    $('#add_more').click(function() {
+      let form_idx = parseInt($('#id_form-TOTAL_FORMS').val());
+      let MAX_NUM_FORMS = parseInt($('#id_form-MAX_NUM_FORMS').val());
+      if(form_idx < MAX_NUM_FORMS) {
+        $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+      }
+      else {
+        window.alert("Cannot add more document");
+      }
+
+    });
+  });
+</script>
+{% endblock javascript %}

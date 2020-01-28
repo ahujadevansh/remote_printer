@@ -28,9 +28,10 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_user(self, email, password, **kwargs):
+        kwargs.update({'mobile':0, 'gender':'', 'date_Of_birth':'1951-01-01', 'user_type':'1'})
         return self._create_user(email, password, False, False, **kwargs)
 
     def create_superuser(self, email, password, **kwargs):
-        kwargs.update({'mobile':0, 'gender':'', 'date_Of_birth':'1951-01-01'})
+        kwargs.update({'mobile':0, 'gender':'', 'date_Of_birth':'1951-01-01', 'user_type':'1'})
         user = self._create_user(email, password, True, True, **kwargs)
         return user

@@ -18,7 +18,7 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        exclude = ['id']
+        fields = ['email', 'password1', 'password2', 'first_name', 'last_name', 'mobile', 'gender', 'date_Of_birth', ]
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -37,5 +37,5 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        exclude = ['id', 'password', 'last_login', 'date_joined', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions', '']
+        fields = ['email','first_name', 'last_name', 'mobile', 'gender', 'date_Of_birth', ]
 

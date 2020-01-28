@@ -56,7 +56,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     f"{APP_NAME}.users.apps.UsersConfig",
     "printer.apps.PrinterConfig",
-    "core.apps.CoreConfig"
+    "core.apps.CoreConfig",
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -306,3 +306,4 @@ MANAGERS = ADMINS
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+

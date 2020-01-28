@@ -1,0 +1,33 @@
+<div class="row sticky-top" style="padding: 0px !important;">
+  <ul class="nav col-md-12 p-1 nav-bar" style="background-color: #3a3f48;">
+
+      <li class="nav-item" id="show-sidebar">
+        <a class="nav-link" href="#" >
+          <i class="fas fa-bars ml-3"></i>
+        </a>
+      </li>
+
+      <li class="nav-item" id="close-sidebar">
+        <a class="nav-link" href="#">
+          <i class="fas fa-times ml-3"></i>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}" > <i class="fas fa-home"></i> Home</a>
+      </li>
+      {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </li>
+      {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'users:login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'users:register' %}"><i class="fas fa-user-alt    "></i> Register</a>
+          </li>
+      {% endif %}
+
+  </ul>
+</div>
