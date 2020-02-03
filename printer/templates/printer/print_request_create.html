@@ -22,7 +22,7 @@
             {{print_request_form.media}}
             {{print_request_form|crispy}}
             {{ formset.management_form }}
-            <input type="button" class="btn btn-success m-2 float-right" value="Add More" id="add_more">
+            <input type="button" class="btn btn-success m-2 float-right" value="Add Document" id="add_more">
             <div class="mt-5" id="form_set">
               {% for form in formset %}
                 {{ form|crispy }}

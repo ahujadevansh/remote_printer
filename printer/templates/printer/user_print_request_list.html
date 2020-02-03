@@ -29,7 +29,7 @@
           <th scope="col">Rejected On</th>
           <th scope="col">Paid On</th>
           <th scope="col">Amount</th>
-          <th colspan="3">Action</th>
+          <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -44,15 +44,17 @@
             <td>{{ print.rejected_on|default:"Not Yet" }}</td>
             <td>{{ print.paid_on|default:"Not Yet" }}</td>
             <td>{{ print.amount|default:"Not Yet" }}</td>
-            {% if print.status == 1 %}
-              <td><a href="#" class="btn btn-warning" >Cancel</a></td>
-            {% elif print.status == 4 %}
-              <td><a href="#" class="btn btn-info" >Re apply</a></td>
-            {% elif print.status == 2 %}
-              <td></td>
-            {% elif print.status == 3 or print.status == 4 or print.status == 5 %}
-              <td><a href="{% url 'printer:print_request_delete' print.pk %}" class="btn btn-danger" >Delete</a></td>
-            {% endif %}
+            <td>
+              {% if print.status == 1 %}
+                <a href="{% url 'printer:print_request_cancel' print.pk %}" class="btn btn-warning mx-1" >Cancel</a>
+              {% endif %}
+              {% if print.status == 4 %}
+                <a href="{% url 'printer:print_request_reapply' print.pk %}" class="btn btn-info mx-1" >Re apply</a>
+              {% endif %}
+              {% if print.status == 3 or print.status == 4 or print.status == 5 %}
+                <a href="{% url 'printer:print_request_delete' print.pk %}" class="btn btn-danger mx-1" >Delete</a>
+              {% endif %}
+            </td>
           </tr>
         {% endfor %}
       </tbody>

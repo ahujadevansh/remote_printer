@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% load humanize %}
 
 {% block title %}
    Print:{{user.email}}
@@ -8,7 +9,88 @@
 
 
 {% block bodycontent %}
-  <div class="container-fluid">
-    {{print_request}}
+  <div class="container">
+    <article class="media border rounded shadow p-3 m-2 bg-white">
+            <img class="rounded-circle img-fluid" style="height:50px;width:50px" src="{{ print_request.client.profile_pic.url }}" alt="client profile pic">
+            <div class="media-body pl-2">
+                <h4><a href="">{{ print_request.client }}</a><small><i> Requested on {{ print_request.created_at|date:"F d, Y" |naturaltime }} at {{ print_request.created_at|date:"g:i A" |naturaltime }}</i></small></h4><hr>
+                <h2 class="text-primary text-break">{{ print_request.get_status_display|title }}</h2>
+                <small class="text-muted">Printed On {{ print_request.printed_on|date:"F d, Y"|naturaltime|default:"Not Yet" }} at {{ print_request.printed_on|date:"g:i A" |naturaltime|default:"" }}</small>
+                {% if print_request.description %}
+                  <h3>Description:</h3>
+                  <p class="text-break" >{{print_request.description|safe|linebreaksbr|default:"nothing"|urlize}}</p>
+                {% endif %}
+                <div class="row">
+                  <table class="table  table-responsive col-md-2" >
+                      <tbody>
+                          <tr class="table-secondary">
+                            <td>Front Pages</td>
+                            <td>{{ print_request.no_of_front_page }}</td>
+                          </tr>
+                          <tr class="table-secondary">
+                            <td>Blank Pages</td>
+                            <td>{{ print_request.no_of_blank_page }}</td>
+                          </tr>
+                          <tr class="table-secondary">
+                            <td>Color</td>
+                            {% if print_request.is_color %}
+                              <td><i class='fas fa-check-circle' style='color:green'></i></td>
+                            {% else %}
+                              <td><i class='fas fa-times-circle' style='color:red'></i></td>
+                            {% endif %}
+                          </tr>
+                          <tr class="table-secondary">
+                            <td>Both Sided</td>
+                            {% if print_request.is_both_side %}
+                              <td><i class='fas fa-check-circle' style='color:green'></i></td>
+                            {% else %}
+                              <td><i class='fas fa-times-circle' style='color:red'></i></td>
+                            {% endif %}
+                          </tr>
+                      </tbody>
+                    </table>
+                  {% if print_requests_files %}
+                    <table class="table table-hover table-responsive col-md-10" >
+                      <thead>
+                        <tr>
+                          <th scope="col">Srno.</th>
+                          <th scope="col">File</th>
+                          <th scope="col">No Of Copies</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for file in print_requests_files %}
+                          <tr>
+                            <th scope="row">{{forloop.counter}}</th>
+                            <td><a href="{{ file.document.url }}" target="_blank">{{ file.document_name }}</a></td>
+                            <td>{{ file.no_of_copies }}</td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  {% endif %}
+                </div>
+
+                <div class="clearfix">
+                    {% if print_request.client == user %}
+                        <hr>
+                        {% if print_request.status == 1 %}
+                          <a href="{% url 'printer:print_request_cancel' print_request.pk %}" class="btn btn-warning mx-1 float-right" >Cancel</a>
+                        {% endif %}
+                        {% if print_request.status == 4 %}
+                          <a href="{% url 'printer:print_request_reapply' print_request.pk %}" class="btn btn-info mx-1  float-right" >Re apply</a>
+                        {% endif %}
+                        {% if print_request.status == 2 %}
+                            <a href="#" class="btn btn-info" >Pay</a>
+                        {% endif %}
+                        {% if print_request.status == 3 or print_request.status == 4 or print_request.status == 5 %}
+                          <a href="{% url 'printer:print_request_delete' print_request.pk %}" class="btn btn-danger mx-1  float-right" >Delete</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+
+            </div>
+        </article>
   </div>
 {% endblock bodycontent %}

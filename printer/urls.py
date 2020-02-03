@@ -16,5 +16,5 @@ urlpatterns = [
     path('print-request-reject/<int:pk>/', printer_views.PrintRequestRejectView.as_view(),
          name='print_request_reject'),
     path('print-request-reapply/<int:pk>/', printer_views.PrintRequestReapplyView.as_view(),
-    name='print_request_reapply'),
+         name='print_request_reapply'),
 ]

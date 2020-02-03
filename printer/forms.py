@@ -35,5 +35,5 @@ class BasePrintRequestFileFormSet(BaseModelFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.queryset = PrintRequestFile.objects.none()
-PrintRequestFileFormSet = modelformset_factory(PrintRequestFile, form=PrintRequestFileForm, extra=1, max_num=10,
+PrintRequestFileFormSet = modelformset_factory(PrintRequestFile, form=PrintRequestFileForm, extra=0, max_num=10,
                                                formset=BasePrintRequestFileFormSet)

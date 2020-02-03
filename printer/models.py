@@ -81,6 +81,9 @@ class PrintRequestFile(MetaDataModel):
         # pylint: disable=no-member
         return f"{self.print_request_id.pk}-{self.print_request_id}"
 
+    def document_name(self):
+        return os.path.basename(self.document.name)
+
 
 class Price(MetaDataModel):
 

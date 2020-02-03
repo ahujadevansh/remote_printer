@@ -20,17 +20,6 @@ from . models import PrintRequest, PrintRequestFile
 
 
 
-# class PrintRequestCreateView(LoginRequiredMixin, CreateView):
-
-#     template_name = 'printer/print_request_create.html'
-#     form_class = forms.PrintRequestForm
-#     model = PrintRequest
-
-#     def form_valid(self, form):
-#         form.instance.client = self.request.user
-#         form.instance.status = PrintRequest.STATUS.get_value('requested')
-#         return super().form_valid(form)
-
 
 class PrintRequestCreateView(LoginRequiredMixin, View):
 
@@ -50,7 +39,7 @@ class PrintRequestCreateView(LoginRequiredMixin, View):
         print_request_form = forms.PrintRequestForm(request.POST)
         formset = forms.PrintRequestFileFormSet(request.POST, request.FILES)
         if print_request_form.is_valid() and formset.is_valid():
-            if print_request_form.instance.description or formset[0].instance.document:
+            if print_request_form.instance.description or len(formset) != 0:
                 print_request_form.instance.client = self.request.user
                 print_request_form.instance.status = PrintRequest.STATUS.get_value('requested')
                 print_request = print_request_form.save()
@@ -88,7 +77,9 @@ class UserPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(self, request, *args, **kwargs):
         # pylint: disable=unused-argument
         print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
-        print_requests_files = PrintRequestFile.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False))
+        print_requests_files = PrintRequestFile.objects.filter(Q(print_request_id=print_request.pk) &
+                                                               Q(is_deleted=False))
+        print(print_requests_files)
         if print_request:
             context = {'print_request': print_request,
                        'print_requests_files': print_requests_files
@@ -170,7 +161,7 @@ class PrintRequestReapplyView(LoginRequiredMixin, UserPassesTestMixin, View):
         # pylint: disable=unused-argument
         print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
         if print_request.status == 4:
-            print_request.status = print_request.STATUS.get_value("Requested")
+            print_request.status = print_request.STATUS.get_value("requested")
             print_request.save()
             messages.info(request, "Your print request has been re applied")
         else:
