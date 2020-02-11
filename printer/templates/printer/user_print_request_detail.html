@@ -9,88 +9,93 @@
 
 
 {% block bodycontent %}
-  <div class="container">
-    <article class="media border rounded shadow p-3 m-2 bg-white">
-            <img class="rounded-circle img-fluid" style="height:50px;width:50px" src="{{ print_request.client.profile_pic.url }}" alt="client profile pic">
-            <div class="media-body pl-2">
-                <h4><a href="">{{ print_request.client }}</a><small><i> Requested on {{ print_request.created_at|date:"F d, Y" |naturaltime }} at {{ print_request.created_at|date:"g:i A" |naturaltime }}</i></small></h4><hr>
-                <h2 class="text-primary text-break">{{ print_request.get_status_display|title }}</h2>
-                <small class="text-muted">Printed On {{ print_request.printed_on|date:"F d, Y"|naturaltime|default:"Not Yet" }} at {{ print_request.printed_on|date:"g:i A" |naturaltime|default:"" }}</small>
-                {% if print_request.description %}
-                  <h3>Description:</h3>
-                  <p class="text-break" >{{print_request.description|safe|linebreaksbr|default:"nothing"|urlize}}</p>
-                {% endif %}
-                <div class="row">
-                  <table class="table  table-responsive col-md-2" >
-                      <tbody>
-                          <tr class="table-secondary">
-                            <td>Front Pages</td>
-                            <td>{{ print_request.no_of_front_page }}</td>
-                          </tr>
-                          <tr class="table-secondary">
-                            <td>Blank Pages</td>
-                            <td>{{ print_request.no_of_blank_page }}</td>
-                          </tr>
-                          <tr class="table-secondary">
-                            <td>Color</td>
-                            {% if print_request.is_color %}
-                              <td><i class='fas fa-check-circle' style='color:green'></i></td>
-                            {% else %}
-                              <td><i class='fas fa-times-circle' style='color:red'></i></td>
-                            {% endif %}
-                          </tr>
-                          <tr class="table-secondary">
-                            <td>Both Sided</td>
-                            {% if print_request.is_both_side %}
-                              <td><i class='fas fa-check-circle' style='color:green'></i></td>
-                            {% else %}
-                              <td><i class='fas fa-times-circle' style='color:red'></i></td>
-                            {% endif %}
-                          </tr>
-                      </tbody>
-                    </table>
-                  {% if print_requests_files %}
-                    <table class="table table-hover table-responsive col-md-10" >
-                      <thead>
-                        <tr>
-                          <th scope="col">Srno.</th>
-                          <th scope="col">File</th>
-                          <th scope="col">No Of Copies</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for file in print_requests_files %}
-                          <tr>
-                            <th scope="row">{{forloop.counter}}</th>
-                            <td><a href="{{ file.document.url }}" target="_blank">{{ file.document_name }}</a></td>
-                            <td>{{ file.no_of_copies }}</td>
-                          </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  {% endif %}
-                </div>
+  <div class="container-fluid">
+    <article class="border rounded shadow p-2 bg-white">
+      <div class="row">
+        <div class="col-sm-1">
+          <img class="rounded-circle img-fluid pl-1" style="height:75px;width:75px" src="{{ print_request.client.profile_pic.url }}" alt="client profile pic">
+        </div>
+        <div class="col-sm-11">
+          <h4 class="text-break">{{ print_request.client }}</h4>
+          <p class="text-break"> Requested on {{ print_request.created_at|date:"F d, Y" |naturaltime }} at {{ print_request.created_at|date:"g:i A" |naturaltime }}</p>
+          <h4 class="text-primary text-break">{{ print_request.get_status_display|title }}</h4>
+          {% if print_request.printed_on %}
+            <p class="text-muted">Printed On {{ print_request.printed_on|date:"F d, Y"|naturaltime|default:"-" }} at {{ print_request.printed_on|date:"g:i A" |naturaltime|default:"-" }}</p>
+          {% endif %}
+          <hr>
+        </div>
+      </div>
 
-                <div class="clearfix">
-                    {% if print_request.client == user %}
-                        <hr>
-                        {% if print_request.status == 1 %}
-                          <a href="{% url 'printer:print_request_cancel' print_request.pk %}" class="btn btn-warning mx-1 float-right" >Cancel</a>
-                        {% endif %}
-                        {% if print_request.status == 4 %}
-                          <a href="{% url 'printer:print_request_reapply' print_request.pk %}" class="btn btn-info mx-1  float-right" >Re apply</a>
-                        {% endif %}
-                        {% if print_request.status == 2 %}
-                            <a href="#" class="btn btn-info" >Pay</a>
-                        {% endif %}
-                        {% if print_request.status == 3 or print_request.status == 4 or print_request.status == 5 %}
-                          <a href="{% url 'printer:print_request_delete' print_request.pk %}" class="btn btn-danger mx-1  float-right" >Delete</a>
-                        {% endif %}
-                    {% endif %}
-                </div>
+      <div class="container">
+        <button type="button" class="btn btn-info m-2">
+          Front Pages <span class="badge badge-light">{{ print_request.no_of_front_page }}</span>
+        </button>
+        <button type="button" class="btn btn-info m-2">
+          Blank Pages <span class="badge badge-light">{{ print_request.no_of_blank_page }}</span>
+        </button>
 
+        {% if print_request.is_color %}
+          <button type="button" class="btn btn-success m-2">
+        {% else %}
+          <button type="button" class="btn btn-secondary m-2">
+        {% endif %}
+            Color
+          </button>
 
-            </div>
-        </article>
+        {% if print_request.is_both_side %}
+          <button type="button" class="btn btn-success m-2">
+        {% else %}
+          <button type="button" class="btn btn-danger m-2">
+        {% endif %}
+            Both Sides
+          </button>
+      <div>
+
+      {% if print_request.description %}
+        <div class="container my-2 shadow p-2 mb-4 bg-light ">
+            <h3 class="text-primary">Description:</h3>
+            <p class="text-break" >{{print_request.description|safe|linebreaksbr|default:"nothing"|urlize}}</p>
+        </div>
+      {% endif %}
+
+      {% if print_requests_files %}
+        <table class="table table-hover table-responsive" >
+          <thead>
+            <tr>
+              <th scope="col">Srno.</th>
+              <th scope="col">File</th>
+              <th scope="col">No Of Copies</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for file in print_requests_files %}
+              <tr>
+                <th scope="row">{{forloop.counter}}</th>
+                <td><a href="{{ file.document.url }}" target="_blank">{{ file.document_name }}</a></td>
+                <td>{{ file.no_of_copies }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+
+      <div class="clearfix">
+          {% if print_request.client == user %}
+              <hr>
+              {% if print_request.status == 1 %}
+                <a href="{% url 'printer:print_request_cancel' print_request.pk %}" class="btn btn-warning mx-1 float-right" >Cancel</a>
+              {% endif %}
+              {% if print_request.status == 4 %}
+                <a href="{% url 'printer:print_request_reapply' print_request.pk %}" class="btn btn-info mx-1  float-right" >Re apply</a>
+              {% endif %}
+              {% if print_request.status == 2 %}
+                  <a href="#" class="btn btn-info" >Pay</a>
+              {% endif %}
+              {% if print_request.status == 3 or print_request.status == 4 or print_request.status == 5 %}
+                <a href="{% url 'printer:print_request_delete' print_request.pk %}" class="btn btn-danger mx-1  float-right" >Delete</a>
+              {% endif %}
+          {% endif %}
+      </div>
+    </article>
   </div>
 {% endblock bodycontent %}

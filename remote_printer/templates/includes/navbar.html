@@ -1,33 +1,37 @@
-<div class="row sticky-top" style="padding: 0px !important;">
-  <ul class="nav col-md-12 p-1 nav-bar" style="background-color: #3a3f48;">
 
-      <li class="nav-item" id="show-sidebar">
-        <a class="nav-link" href="#" >
-          <i class="fas fa-bars ml-3"></i>
-        </a>
-      </li>
+{% load static i18n %}
 
-      <li class="nav-item" id="close-sidebar">
-        <a class="nav-link" href="#">
-          <i class="fas fa-times ml-3"></i>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'home' %}" > <i class="fas fa-home"></i> Home</a>
-      </li>
-      {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
-          </li>
-      {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'users:login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'users:register' %}"><i class="fas fa-user-alt    "></i> Register</a>
-          </li>
-      {% endif %}
-
+<nav class="row sticky-top" style="padding: 0px !important;">
+  <ul class="nav col-md-12 p-2 nav-bar" style="background-color: #2c292f;">
+    <div class="container row">
+      <div class="col-md-2 col-sm-2">
+        <img src="{% static 'images/remote-printer.png' %}" class="pl-3" height="100" alt="remote-printer logo">
+      </div>
+      <div class="col-md-10 col-sm-10">
+        <h2 class="text-center text-white">Remote Printer</h2>
+        <p class="text-light mb-2 text-center">Print anywhere easily with this Remote Printer</p>
+      </div>
+    </div>
+    {% if user.is_authenticated %}
+        <li class="nav-item dropdown ml-auto">
+            <a class="nav-link dropdown-toggle text-warning" href="#" id="navbardrop" data-toggle="dropdown">
+                <i class="fas fa-power-off"></i>
+            </a>
+            <div class="dropdown-menu">
+                <a class="nav-link" href="{% url 'users:profile' %}"> <i class="fas fa-user-circle"></i> profile</a>
+                <a class="nav-link" href="{% url 'users:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </li>
+    {% else %}
+        <li class="nav-item dropdown ml-auto text-danger">
+            <a class="nav-link dropdown-toggle text-warning" href="#" id="navbardrop" data-toggle="dropdown">
+                <i class="fas fa-power-off"></i>
+            </a>
+            <div class="dropdown-menu">
+                <a class="nav-link" href="{% url 'users:login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a class="nav-link" href="{% url 'users:register' %}"><i class="fas fa-user-alt    "></i> Register</a>
+            </div>
+        </li>
+    {% endif %}
   </ul>
-</div>
+</nav>

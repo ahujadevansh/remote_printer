@@ -14,6 +14,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="{% static 'css/spacelap_bootstrap.min.css' %}">
+
     <!-- Google Icon -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
@@ -23,30 +25,31 @@
     <!-- SIDEBAR CSS -->
     <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <![endif]-->
+    <!-- FOOTER CSS -->
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
 
+    <!-- favicon -->
     <link rel="icon" href="{% static 'images/favicon/favicon.ico' %}">
 
-    {% block css %}{% endblock css %}
-
     <!-- This file stores project-specific CSS -->
-
     <link href="{% static 'css/project.css' %}" rel="stylesheet">
+
+    <!-- Page Level CSS -->
+    {% block css %}{% endblock css %}
 
   </head>
 
   <body class="bg-light">
+    <div class="page-wrapper chiller-theme">
+      <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+        <i class="fas fa-bars"></i>
+      </a>
+      {% include "includes/sidebar.html" %}
 
-
-    {% include "includes/sidebar.html" %}
-
-
-
-    <main class="container-fluid page-content">
+      <main class="container-fluid page-content">
+        {% include 'includes/header.html' %}
         {% include 'includes/navbar.html' %}
+
         {% if messages %}
           {% for message in messages %}
             {% if message.tags == 'error' %}
@@ -68,7 +71,10 @@
           <p>Use this document as a way to quick start any new project.</p>
         {% endblock bodycontent %}
 
-    </main>
+        {% include 'includes/footer.html' %}
+
+      </main>
+    </div>
 
     {% block modal %}{% endblock modal %}
 

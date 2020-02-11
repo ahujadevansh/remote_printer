@@ -12,7 +12,7 @@ class PrintRequestAdmin(admin.ModelAdmin):
     search_fields = ('client',)
     empty_value_display = 'NULL'
     ordering = ('-created_at',)
-    readonly_fields = ('created_at', 'updated_at', 'amount')
+    readonly_fields = ('created_at', 'updated_at')
 
     actions = ['soft_delete', 'remove_soft_delete']
 

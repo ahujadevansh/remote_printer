@@ -19,8 +19,6 @@ from . models import PrintRequest, PrintRequestFile
 
 
 
-
-
 class PrintRequestCreateView(LoginRequiredMixin, View):
 
     template_name = 'printer/print_request_create.html'
@@ -30,7 +28,8 @@ class PrintRequestCreateView(LoginRequiredMixin, View):
         print_request_form = forms.PrintRequestForm()
         formset = forms.PrintRequestFileFormSet()
         context = {'print_request_form': print_request_form,
-                   'formset': formset
+                   'formset': formset,
+                   'sidebarSection': 'print_request_create'
                    }
         return render(request, self.template_name, context)
 
@@ -39,7 +38,7 @@ class PrintRequestCreateView(LoginRequiredMixin, View):
         print_request_form = forms.PrintRequestForm(request.POST)
         formset = forms.PrintRequestFileFormSet(request.POST, request.FILES)
         if print_request_form.is_valid() and formset.is_valid():
-            if print_request_form.instance.description or len(formset) != 0:
+            if print_request_form.instance.description != '' or len(formset) != 0 or print_request_form.instance.no_of_front_page > 0 or print_request_form.instance.no_of_blank_page > 0:
                 print_request_form.instance.client = self.request.user
                 print_request_form.instance.status = PrintRequest.STATUS.get_value('requested')
                 print_request = print_request_form.save()
@@ -51,11 +50,12 @@ class PrintRequestCreateView(LoginRequiredMixin, View):
 
                 return redirect(print_request)
             else:
-                messages.warning(request, "Please Fill either Description or submit a file")
+                messages.warning(request, "You cannot submit blank form")
 
         context = {'print_request_form': print_request_form,
-                   'formset': formset
-                   }
+                   'formset': formset,
+                   'sidebarSection': 'print_request_create'
+                  }
         return render(request, self.template_name, context)
 
 
@@ -69,6 +69,13 @@ class UserPrintRequestListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = get_object_or_404(CustomUser, id=self.request.user.pk)
         return PrintRequest.objects.filter(Q(client=user) & Q(is_deleted=False)).order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['sidebarSection'] = 'user_print_request_list'
+        return context
 
 class UserPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
 
@@ -94,6 +101,52 @@ class UserPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
         if print_request.client == self.request.user:
             return True
         return False
+
+
+class StaffPrintRequestListView(UserPassesTestMixin, LoginRequiredMixin, ListView):
+
+    template_name = 'printer/staff_print_request_list.html'
+    model = PrintRequest
+    context_object_name = 'prints'
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['sidebarSection'] = 'staff_print_request_list'
+        return context
+
+    def test_func(self):
+        if self.request.user.user_type == self.request.user.UserType.get_value("staff"):
+            return True
+        return False
+
+class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    template_name = 'printer/staff_print_request_detail.html'
+
+    def get(self, request, *args, **kwargs):
+        # pylint: disable=unused-argument
+        print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
+        print_requests_files = PrintRequestFile.objects.filter(Q(print_request_id=print_request.pk) &
+                                                               Q(is_deleted=False))
+        print(print_requests_files)
+        if print_request:
+            context = {'print_request': print_request,
+                       'print_requests_files': print_requests_files,
+                       'sidebarSection': 'staff_print_request_detail',
+                      }
+            return render(request, self.template_name, context)
+
+        return HttpResponse("<h1>404</h1>")
+
+
+    def test_func(self):
+        if self.request.user.user_type == self.request.user.UserType.get_value("staff"):
+            return True
+        return False
+
 
 class PrintRequestSoftDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
 
@@ -173,3 +226,4 @@ class PrintRequestReapplyView(LoginRequiredMixin, UserPassesTestMixin, View):
         if print_request.client == self.request.user:
             return True
         return False
+

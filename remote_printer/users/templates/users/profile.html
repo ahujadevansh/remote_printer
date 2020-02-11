@@ -13,12 +13,13 @@
 {% block bodycontent %}
 
     <div class="container">
-        <div class="media border rounded shadow p-3 m-2">
-            <div class="media-body p-4">
-                <h2>{{user.first_name|title}} {{user.last_name|title}}</h2>
-                <p>{{ user.email }}</p>
-            </div>
-        </div>
+      <div class="media border rounded shadow p-3 m-2">
+          <img class="img-thumbnail rounded-circle img-fluid" style="height:125px;width:125px" src="{{ user.profile_pic.url }}" alt="user profile pic">
+          <div class="media-body p-4">
+              <h2>{{user.first_name|title}} {{user.last_name|title}}</h2>
+              <p>{{ user.email }}</p>
+          </div>
+      </div>
 
 
         {% if form.is_multipart %}

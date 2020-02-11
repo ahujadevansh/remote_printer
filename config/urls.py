@@ -18,12 +18,13 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-from django.views.generic import RedirectView, TemplateView
+from django.views.generic import RedirectView
+from core import views as core_views
 
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path("", core_views.HomeView.as_view(), name="home"),
     path('favicon.ico/', RedirectView.as_view(url='/static/images/favicon/favicon.ico'), name='favion'),
     path(
         'admin/password_reset/',

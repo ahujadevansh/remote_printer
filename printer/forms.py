@@ -24,7 +24,7 @@ class PrintRequestForm(forms.ModelForm):
 class PrintRequestFileForm(forms.ModelForm):
 
     document = forms.FileField(allow_empty_file=True, required=False)
-    no_of_copies = forms.IntegerField(required=False)
+    no_of_copies = forms.IntegerField(required=False, initial=1, min_value=1, max_value=100)
     class Meta:
 
         model = PrintRequestFile

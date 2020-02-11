@@ -6,7 +6,7 @@ from django.views.decorators.debug import sensitive_variables, sensitive_post_pa
 # from django.views.generic import UpdateView
 from django.views import View
 # from django.contrib.auth.mixins import LoginRequiredMixin
-# from .models import CustomUser
+from .models import CustomUser
 from .forms import UserRegisterForm, UserUpdateForm
 
 
@@ -15,13 +15,15 @@ from .forms import UserRegisterForm, UserUpdateForm
 # To systematically hide all POST parameters of a request in error reports,
 # do not provide any argument to the sensitive_post_parameters decorator.
 
+@login_required()
 @sensitive_post_parameters()
 @sensitive_variables('username', 'form')
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            form.instance.user_type = 2
+            form.instance.user_type = CustomUser.UserType.get_value("client")
+            form.instance.is_active = 0
             user = form.save()
             email = form.cleaned_data.get('email')
             messages.success(request, f"{email} registered sucessfully. Log in to continue")
@@ -29,27 +31,6 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form':form})
-
-
-# @sensitive_post_parameters('username')
-# @login_required
-# def profile(request):
-#     if request.method == 'POST' :
-#         u_form = UserUpdateForm(request.POST, instance=request.user)
-#         p_form = ProfileUpdateForm(request.POST, request.FILES ,instance=request.user.profile)
-#         if p_form.is_valid() and u_form.is_valid() :
-#             p_form.save()
-#             u_form.save()
-#             messages.info(request,"Your Profile is updated")
-#             return redirect('users_profile')
-#     else:
-#         u_form = UserUpdateForm(instance=request.user)
-#         p_form = ProfileUpdateForm(instance=request.user.profile)
-#     context = {
-#         'u_form' : u_form,
-#         'p_form' : p_form,
-#     }
-#     return render(request,'users/profile.html',context)
 
 
 # If one of your views receives an HttpRequest object with POST parameters susceptible to

@@ -37,7 +37,7 @@
           <tr>
             <th scope="row">{{forloop.counter}}</th>
             {% comment %} <td>{{ print.description|safe|linebreaksbr|default:"nothing" }}</td> {% endcomment %}
-            <td><a href="{% url 'printer:print_request_detail' print.pk %}">{{ print.get_status_display }}</a></td>
+            <td><a href="{% url 'printer:user_print_request_detail' print.pk %}">{{ print.get_status_display }}</a></td>
             <td>{{ print.created_at }}</td>
             <td>{{ print.printed_on|default:"Not Yet" }}</td>
             <td>{{ print.cancelled_on|default:"Not Yet" }}</td>
