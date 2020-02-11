@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from . models import PrintRequest, PrintRequestFile
+from . models import PrintRequest, PrintRequestFile, Price
 
 @admin.register(PrintRequest)
 class PrintRequestAdmin(admin.ModelAdmin):
@@ -70,3 +70,5 @@ class PrintRequestFileAdmin(admin.ModelAdmin):
 
     class Meta:
         model = PrintRequestFile
+
+admin.site.register(Price)

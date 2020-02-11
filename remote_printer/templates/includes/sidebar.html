@@ -30,54 +30,63 @@
     <!-- sidebar-header  -->
     <div class="sidebar-menu">
       <ul>
-      {% comment %} {% if sidebarSection == "dashboard" %}
-        <li class="sidebar-item active">
-      {% else %}
-        <li class="sidebar-item">
-      {% endif %}
-            <a href="{% url 'home' %}">
-            <i class="fa fa-tachometer-alt"></i>
-            <span>Dashboard</span>
-          </a>
-        </li> {% endcomment %}
+      {% if user.user_type == 1 %}
+        {% if sidebarSection == "dashboard" %}
+          <li class="sidebar-item active">
+        {% else %}
+          <li class="sidebar-item">
+        {% endif %}
+              <a href="{% url 'home' %}">
+              <i class="fa fa-tachometer-alt"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
 
-      {% if sidebarSection == "home" %}
-        <li class="sidebar-item active">
-      {% else %}
-        <li class="sidebar-item">
+        {% if sidebarSection == "user_print_request_list" %}
+          <li class="sidebar-item active">
+        {% else %}
+          <li class="sidebar-item">
+        {% endif %}
+            <a href="{% url 'printer:staff_print_request_list' %}">
+              <i class="fas fa-tasks"></i>
+              <span>Print Requests</span>
+            </a>
+          </li>
       {% endif %}
-            <a href="{% url 'home' %}">
-            <i class="fa fa-home"></i>
-            <span>Home</span>
-          </a>
-        </li>
-      {% if sidebarSection == "print_request_create" %}
-        <li class="sidebar-item active">
-      {% else %}
-        <li class="sidebar-item">
-      {% endif %}
-          <a href="{% url 'printer:print_request_create' %}">
-            <i class="fa fa-print"></i>
-            <span>Print</span>
-          </a>
-        </li>
 
-      {% if sidebarSection == "user_print_request_list" %}
-        <li class="sidebar-item active">
-      {% else %}
-        <li class="sidebar-item">
-      {% endif %}
-          <a href="{% url 'printer:user_print_request_list' %}">
-            <i class="fa fa-calendar"></i>
-            <span>My Prints</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="fa fa-folder"></i>
-            <span>Examples</span>
-          </a>
-        </li>
+      {% if user.user_type == 2 %}
+        {% if sidebarSection == "home" %}
+          <li class="sidebar-item active">
+        {% else %}
+          <li class="sidebar-item">
+        {% endif %}
+              <a href="{% url 'home' %}">
+              <i class="fa fa-home"></i>
+              <span>Home</span>
+            </a>
+          </li>
+        {% if sidebarSection == "print_request_create" %}
+          <li class="sidebar-item active">
+        {% else %}
+          <li class="sidebar-item">
+        {% endif %}
+            <a href="{% url 'printer:print_request_create' %}">
+              <i class="fa fa-print"></i>
+              <span>Print</span>
+            </a>
+          </li>
+
+        {% if sidebarSection == "user_print_request_list" %}
+          <li class="sidebar-item active">
+        {% else %}
+          <li class="sidebar-item">
+        {% endif %}
+            <a href="{% url 'printer:user_print_request_list' %}">
+              <i class="fa fa-calendar"></i>
+              <span>My Prints</span>
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
     <!-- sidebar-menu  -->

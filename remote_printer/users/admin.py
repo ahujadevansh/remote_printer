@@ -29,6 +29,7 @@ class CustomUserAdmin(BaseUserAdmin):
             'mobile',
             'gender',
             'date_Of_birth',
+            'user_type',
         )}),
         ('Permissions', {'fields': (
             'is_active',

@@ -99,4 +99,4 @@ class Price(MetaDataModel):
         verbose_name_plural = _('Prices')
 
     def __str__(self):
-        return self.wef
+        return f'{self.wef.date()}'

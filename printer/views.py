@@ -14,8 +14,8 @@ from django.views.generic import (
 
 from remote_printer.users.models import CustomUser
 
-from . import forms
-from . models import PrintRequest, PrintRequestFile
+from . import forms as printer_forms
+from . models import PrintRequest, PrintRequestFile, Price
 
 
 
@@ -25,8 +25,8 @@ class PrintRequestCreateView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         # pylint: disable=unused-argument
-        print_request_form = forms.PrintRequestForm()
-        formset = forms.PrintRequestFileFormSet()
+        print_request_form = printer_forms.PrintRequestForm()
+        formset = printer_forms.PrintRequestFileFormSet()
         context = {'print_request_form': print_request_form,
                    'formset': formset,
                    'sidebarSection': 'print_request_create'
@@ -35,8 +35,8 @@ class PrintRequestCreateView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         # pylint: disable=unused-argument
-        print_request_form = forms.PrintRequestForm(request.POST)
-        formset = forms.PrintRequestFileFormSet(request.POST, request.FILES)
+        print_request_form = printer_forms.PrintRequestForm(request.POST)
+        formset = printer_forms.PrintRequestFileFormSet(request.POST, request.FILES)
         if print_request_form.is_valid() and formset.is_valid():
             if print_request_form.instance.description != '' or len(formset) != 0 or print_request_form.instance.no_of_front_page > 0 or print_request_form.instance.no_of_blank_page > 0:
                 print_request_form.instance.client = self.request.user
@@ -103,7 +103,7 @@ class UserPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
         return False
 
 
-class StaffPrintRequestListView(UserPassesTestMixin, LoginRequiredMixin, ListView):
+class StaffPrintRequestListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     template_name = 'printer/staff_print_request_list.html'
     model = PrintRequest
@@ -131,10 +131,37 @@ class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View)
         print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
         print_requests_files = PrintRequestFile.objects.filter(Q(print_request_id=print_request.pk) &
                                                                Q(is_deleted=False))
-        print(print_requests_files)
+        form = printer_forms.StaffPrintRequestForm(instance=print_request)
         if print_request:
             context = {'print_request': print_request,
                        'print_requests_files': print_requests_files,
+                       'form': form,
+                       'sidebarSection': 'staff_print_request_detail',
+                      }
+            return render(request, self.template_name, context)
+
+        return HttpResponse("<h1>404</h1>")
+
+    def post(self, request, *args, **kwargs):
+        # pylint: disable=unused-argument
+        print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
+        print_requests_files = PrintRequestFile.objects.filter(Q(print_request_id=print_request.pk) &
+                                                               Q(is_deleted=False))
+        form = printer_forms.StaffPrintRequestForm(self.request.POST, instance=print_request)
+        if form.is_valid():
+            form.instance.status = PrintRequest.STATUS.get_value('printed')
+            price = Price.objects.latest('wef')
+            form.instance.amount = (form.instance.no_of_bnw_page * price.bnw_page +
+                                    form.instance.no_of_color_page * price.color_pages +
+                                    (form.instance.no_of_page +
+                                     form.instance.no_of_front_page +
+                                     form.instance.no_of_blank_page) * price.page )
+            form.save()
+            return redirect('printer:staff_print_request_list')
+        else:
+            context = {'print_request': print_request,
+                       'print_requests_files': print_requests_files,
+                       'form': form,
                        'sidebarSection': 'staff_print_request_detail',
                       }
             return render(request, self.template_name, context)

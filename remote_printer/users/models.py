@@ -55,7 +55,7 @@ class CustomUser(AbstractUser):
     gender = models.CharField(max_length=10, choices=[x.value for x in Gender])
     date_Of_birth = models.DateField()
     profile_pic = models.ImageField(default=DEFAULT_PROFILE_IMAGE, upload_to=profile_pic_path)
-    user_type = models.IntegerField()
+    user_type = models.IntegerField(choices=[x.value for x in UserType])
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'

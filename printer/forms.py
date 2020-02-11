@@ -37,3 +37,10 @@ class BasePrintRequestFileFormSet(BaseModelFormSet):
         self.queryset = PrintRequestFile.objects.none()
 PrintRequestFileFormSet = modelformset_factory(PrintRequestFile, form=PrintRequestFileForm, extra=0, max_num=10,
                                                formset=BasePrintRequestFileFormSet)
+
+
+class StaffPrintRequestForm(forms.ModelForm):
+
+    class Meta:
+        model = PrintRequest
+        fields = ['no_of_page', 'no_of_bnw_page', 'no_of_color_page']
