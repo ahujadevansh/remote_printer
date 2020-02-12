@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 APP_NAME = 'remote_printer'
 APP_DIR = os.path.join(BASE_DIR, APP_NAME)
 
-with open(os.path.join(BASE_DIR, r'etc\config.json')) as config_file:
+with open(os.path.join(BASE_DIR, r'etc/config.json')) as config_file:
     config = json.load(config_file)
 
 # Quick-start development settings - unsuitable for production
@@ -251,8 +251,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_USERNAME')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_HOST_USER = os.environ.get('EMAIL_USERNAME', default='')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', default='')
 # https://docs.djangoproject.com/en/2.2/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 

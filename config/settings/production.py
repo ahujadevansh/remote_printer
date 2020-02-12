@@ -76,6 +76,8 @@ TEMPLATES[0]["OPTIONS"]["loaders"] = [  # noqa F405
 
 # EMAIL
 # ------------------------------------------------------------------------------
+EMAIL_HOST_USER = config.get('EMAIL_USERNAME')
+EMAIL_HOST_PASSWORD = config.get('EMAIL_PASSWORD')
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
 DEFAULT_FROM_EMAIL = "remote printer <ad.remoteprinter@gmail.com>"
 
