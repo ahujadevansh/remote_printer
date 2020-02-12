@@ -29,7 +29,7 @@ SECRET_KEY = config.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -259,7 +259,7 @@ EMAIL_TIMEOUT = 5
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL.
-ADMIN_URL = "admin/"
+ADMIN_URL = config.get('ADMIN_URL')
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = [("""Devansh Ahuja""", "ahuja.devansh2@gmail.com")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers

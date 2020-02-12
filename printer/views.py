@@ -38,7 +38,10 @@ class PrintRequestCreateView(LoginRequiredMixin, View):
         print_request_form = printer_forms.PrintRequestForm(request.POST)
         formset = printer_forms.PrintRequestFileFormSet(request.POST, request.FILES)
         if print_request_form.is_valid() and formset.is_valid():
-            if print_request_form.instance.description != '' or len(formset) != 0 or print_request_form.instance.no_of_front_page > 0 or print_request_form.instance.no_of_blank_page > 0:
+            if (print_request_form.instance.description != '' or len(formset) != 0 or
+                    print_request_form.instance.no_of_front_page > 0 or
+                    print_request_form.instance.no_of_blank_page > 0):
+
                 print_request_form.instance.client = self.request.user
                 print_request_form.instance.status = PrintRequest.STATUS.get_value('requested')
                 print_request = print_request_form.save()
@@ -71,6 +74,7 @@ class UserPrintRequestListView(LoginRequiredMixin, ListView):
         return PrintRequest.objects.filter(Q(client=user) & Q(is_deleted=False)).order_by('-created_at')
 
     def get_context_data(self, **kwargs):
+        # pylint: disable=arguments-differ
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
@@ -111,6 +115,7 @@ class StaffPrintRequestListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
     paginate_by = 20
 
     def get_context_data(self, **kwargs):
+        # pylint: disable=arguments-differ
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
@@ -155,7 +160,7 @@ class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View)
                                     form.instance.no_of_color_page * price.color_pages +
                                     (form.instance.no_of_page +
                                      form.instance.no_of_front_page +
-                                     form.instance.no_of_blank_page) * price.page )
+                                     form.instance.no_of_blank_page) * price.page)
             form.save()
             return redirect('printer:staff_print_request_list')
         else:
@@ -253,4 +258,3 @@ class PrintRequestReapplyView(LoginRequiredMixin, UserPassesTestMixin, View):
         if print_request.client == self.request.user:
             return True
         return False
-
