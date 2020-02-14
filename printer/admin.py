@@ -71,4 +71,14 @@ class PrintRequestFileAdmin(admin.ModelAdmin):
     class Meta:
         model = PrintRequestFile
 
-admin.site.register(Price)
+@admin.register(Price)
+class PriceAdmin(admin.ModelAdmin):
+
+    list_display = ('id', '__str__', 'page', 'bnw_page','color_pages')
+    list_display_links = ('__str__',)
+    list_per_page = 100
+    empty_value_display = 'NULL'
+    readonly_fields = ("wef", "updated_at")
+
+    class Meta:
+        model = Price
