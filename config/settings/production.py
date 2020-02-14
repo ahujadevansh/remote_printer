@@ -79,12 +79,12 @@ TEMPLATES[0]["OPTIONS"]["loaders"] = [  # noqa F405
 EMAIL_HOST_USER = config.get('EMAIL_USERNAME')
 EMAIL_HOST_PASSWORD = config.get('EMAIL_PASSWORD')
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
-DEFAULT_FROM_EMAIL = "remote printer <ad.remoteprinter@gmail.com>"
+DEFAULT_FROM_EMAIL = "Remote Printer <ad.remoteprinter@gmail.com>"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = "ad.remoteprinter@gmail.com"
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
-EMAIL_SUBJECT_PREFIX = "Print"
+# EMAIL_SUBJECT_PREFIX = "Print"
 
 
 # LOGGING
@@ -134,10 +134,4 @@ LOGGING = {
 
 # Your stuff...
 # ------------------------------------------------------------------------------
-
-
-ADMINS = [('Devansh', '2017.devansh.ahuja@ves.ac.in')]
-
-MANAGERS = [('Devansh', '2017.devansh.ahuja@ves.ac.in')]
-
 SESSION_COOKIE_AGE = 129600 # 36 hours

@@ -15,7 +15,6 @@ from .forms import UserRegisterForm, UserUpdateForm
 # To systematically hide all POST parameters of a request in error reports,
 # do not provide any argument to the sensitive_post_parameters decorator.
 
-@login_required()
 @sensitive_post_parameters()
 @sensitive_variables('username', 'form')
 def register(request):
@@ -26,7 +25,7 @@ def register(request):
             form.instance.is_active = 0
             user = form.save()
             email = form.cleaned_data.get('email')
-            messages.success(request, f"{email} registered sucessfully. Log in to continue")
+            messages.success(request, f"{email} registered sucessfully. please email ad.remoteprinter@gmail.com. Submitting a request to activate your account. Remote Printer reserves the right to detain any profile in accordance with regulations.")
             return redirect(user)
     else:
         form = UserRegisterForm()
