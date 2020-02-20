@@ -13,7 +13,7 @@ SECRET_KEY = config.get('SECRET_KEY')
 DEBUG = False
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = [u'remoteprinter.pythonanywhere.com', u'127.0.0.1']
+ALLOWED_HOSTS = [u'remoteprinter.pythonanywhere.com']
 
 # DATABASES
 # ------------------------------------------------------------------------------
