@@ -87,6 +87,16 @@
             </a>
           </li>
         {% endif %}
+
+        {% if user.user_type == 1 and user.is_superuser == 1 %}
+          <li class="sidebar-item">
+              <a href="{% url 'admin:index' %}">
+              <i class="fas fa-user-shield"></i>
+              <span>Admin</span>
+            </a>
+          </li>
+        {% endif %}
+
       </ul>
     </div>
     <!-- sidebar-menu  -->

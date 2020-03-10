@@ -63,12 +63,12 @@ class PrintRequestFile(MetaDataModel):
         if len(basefilename) > 101:
             basefilename = basefilename[:101]
         return 'print/{client_id}/{print_request_id}/{basename}_{random_string}{ext}'.format(
-            client_id=self.print_request_id.client.pk, print_request_id=self.print_request_id,
+            client_id=self.print_request.client.pk, print_request_id=self.print_request,
             basename=basefilename, random_string=randomstr, ext=file_extension)
 
 
     id = models.BigAutoField(primary_key=True)
-    print_request_id = models.ForeignKey(PrintRequest, on_delete=models.CASCADE)
+    print_request = models.ForeignKey(PrintRequest, on_delete=models.CASCADE)
     document = models.FileField(upload_to=print_request_file_path, null=True)
     no_of_copies = models.PositiveIntegerField(default=0)
 
@@ -79,10 +79,13 @@ class PrintRequestFile(MetaDataModel):
 
     def __str__(self):
         # pylint: disable=no-member
-        return f"{self.print_request_id.pk}-{self.print_request_id}"
+        return f"{self.print_request.pk}-{self.print_request.client}"
 
     def document_name(self):
-        return os.path.basename(self.document.name)
+        name, ext = os.path.splitext(self.document.name)
+        name = os.path.basename(name).split('_')
+        name = '_'.join(name[0:len(name)-2]) + ext
+        return name
 
 
 class Price(MetaDataModel):

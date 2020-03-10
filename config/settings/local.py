@@ -27,7 +27,10 @@ CACHES = {
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = config.get('EMAIL_HOST')
+EMAIL_HOST_USER = config.get('EMAIL_USERNAME')
+EMAIL_HOST_PASSWORD = config.get('EMAIL_PASSWORD')
 EMAIL_PORT = config.get('EMAIL_PORT')
+DEFAULT_FROM_EMAIL = "Remote Printer <ad.remoteprinter@gmail.com>"
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
 INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
 

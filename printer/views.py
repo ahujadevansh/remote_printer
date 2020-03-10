@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 # pylint: disable=unused-import
 from django.contrib import messages
@@ -11,7 +13,10 @@ from django.views.generic import (
     DeleteView,
     DetailView,
 )
-
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from django.utils.html import strip_tags
 from remote_printer.users.models import CustomUser
 
 from . import forms as printer_forms
@@ -42,14 +47,30 @@ class PrintRequestCreateView(LoginRequiredMixin, View):
                     print_request_form.instance.no_of_front_page > 0 or
                     print_request_form.instance.no_of_blank_page > 0):
 
-                print_request_form.instance.client = self.request.user
+                client = self.request.user
+                print_request_form.instance.client = client
                 print_request_form.instance.status = PrintRequest.STATUS.get_value('requested')
                 print_request = print_request_form.save()
-
+                files = list()
                 for form in formset:
                     if form.instance.document:
-                        form.instance.print_request_id = print_request
-                        form.save()
+                        form.instance.print_request = print_request
+                        f = form.save()
+                        files.append(f)
+
+                subject = f'Print {client.email}'
+                context = {
+                    'print': print_request,
+                    'files': files,
+                    'request': request,
+                    }
+                html_message = render_to_string('printer/email/print_request_create_mail.html', context)
+                plain_message = strip_tags(html_message)
+                from_email = 'ad.remoteprinter@gmail.com'
+                recipient_list = [client.email]
+                send_mail(subject=subject, message=plain_message, from_email=from_email, recipient_list=recipient_list,
+                          fail_silently=False, html_message=html_message)
+
 
                 return redirect(print_request)
             else:
@@ -88,9 +109,8 @@ class UserPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(self, request, *args, **kwargs):
         # pylint: disable=unused-argument
         print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
-        print_requests_files = PrintRequestFile.objects.filter(Q(print_request_id=print_request.pk) &
+        print_requests_files = PrintRequestFile.objects.filter(Q(print_request=print_request.pk) &
                                                                Q(is_deleted=False))
-        print(print_requests_files)
         if print_request:
             context = {'print_request': print_request,
                        'print_requests_files': print_requests_files
@@ -156,6 +176,7 @@ class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View)
         if form.is_valid():
             form.instance.status = PrintRequest.STATUS.get_value('printed')
             price = Price.objects.latest('wef')
+            form.instance.printed_on = datetime.datetime.now()
             form.instance.amount = (form.instance.no_of_bnw_page * price.bnw_page +
                                     form.instance.no_of_color_page * price.color_pages +
                                     (form.instance.no_of_page +

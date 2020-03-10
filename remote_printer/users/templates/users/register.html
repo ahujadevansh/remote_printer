@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
+{% load static i18n %}
 {% load crispy_forms_tags %}
 {% block title %}
     Register
 {% endblock title %}
+
+{% block css %}
+  <link href="{% static 'css/form.css' %}" rel="stylesheet">
+{% endblock css %}
+
 {% block bodycontent %}
     <div class="container">
         <form method='POST'>

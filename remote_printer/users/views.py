@@ -6,6 +6,10 @@ from django.views.decorators.debug import sensitive_variables, sensitive_post_pa
 # from django.views.generic import UpdateView
 from django.views import View
 # from django.contrib.auth.mixins import LoginRequiredMixin
+from django.template.loader import render_to_string
+from django.core.mail import mail_admins
+from django.utils.html import strip_tags
+
 from .models import CustomUser
 from .forms import UserRegisterForm, UserUpdateForm
 
@@ -25,7 +29,19 @@ def register(request):
             form.instance.is_active = 0
             user = form.save()
             email = form.cleaned_data.get('email')
-            messages.success(request, f"{email} registered sucessfully. please email ad.remoteprinter@gmail.com. Submitting a request to activate your account. Remote Printer reserves the right to detain any profile in accordance with regulations.")
+            messages.success(request, f"{email} registered sucessfully. please email ad.remoteprinter@gmail.com. \
+                                        Submitting a request to activate your account. Remote Printer reserves the right \
+                                        to detain any profile in accordance with regulations.")
+
+            subject = 'new user registered ' + email
+            context = {
+                'user': user,
+                }
+            html_message = render_to_string('users/user_register_mail_template.html', context)
+            plain_message = strip_tags(html_message)
+
+            mail_admins(subject, plain_message, fail_silently=False, html_message=html_message)
+
             return redirect(user)
     else:
         form = UserRegisterForm()
@@ -42,7 +58,6 @@ def register(request):
 @method_decorator(sensitive_post_parameters('username'), name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class ProfileView(View):
-
 
     template_name = 'users/profile.html'
 

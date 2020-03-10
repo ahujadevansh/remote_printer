@@ -3,6 +3,7 @@
 etc
 media_cdn
 static_cdn
+db/
 
 ### Django ###
 *.log

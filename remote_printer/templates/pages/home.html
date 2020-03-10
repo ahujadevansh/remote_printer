@@ -19,7 +19,7 @@
         <div class="col-md-3">
           <div class="card-counter primary">
             <i class="fas fa-print"></i>
-            <span class="count-numbers">-</span>
+            <span class="count-numbers">{{ printed }}</span>
             <span class="count-name">Printed</span>
           </div>
         </div>
@@ -27,7 +27,7 @@
         <div class="col-md-3">
           <div class="card-counter danger">
             <i class="far fa-clock"></i>
-            <span class="count-numbers">-</span>
+            <span class="count-numbers">{{ pending }}</span>
             <span class="count-name">Pending</span>
           </div>
         </div>
@@ -35,15 +35,15 @@
         <div class="col-md-3">
           <div class="card-counter success">
             <i class="fas fa-rupee-sign"></i>
-            <span class="count-numbers">-</span>
+            <span class="count-numbers">{{ paid|default:0 }}</span>
             <span class="count-name">Paid</span>
           </div>
         </div>
 
         <div class="col-md-3">
           <div class="card-counter info">
-            <i class="far fa-money-bill-alt"></i>
-            <span class="count-numbers">-</span>
+            <i class="fas fa-coins"></i>
+            <span class="count-numbers">{{ unpaid|default:0 }}</span>
             <span class="count-name">Unpaid</span>
           </div>
         </div>
