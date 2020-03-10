@@ -69,7 +69,7 @@ class PrintRequestCreateView(LoginRequiredMixin, View):
                 html_message = render_to_string('printer/email/print_request_create_mail.html', context)
                 plain_message = strip_tags(html_message)
                 from_email = 'ad.remoteprinter@gmail.com'
-                recipient_list = [client.email]
+                recipient_list = ('ad.remoteprinter@gmail.com',)
                 send_mail(subject=subject, message=plain_message, from_email=from_email, recipient_list=recipient_list,
                           fail_silently=False, html_message=html_message)
 
