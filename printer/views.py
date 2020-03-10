@@ -16,7 +16,9 @@ from django.views.generic import (
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
+from django.utils import timezone
 from django.utils.html import strip_tags
+
 from remote_printer.users.models import CustomUser
 
 from . import forms as printer_forms
@@ -154,7 +156,7 @@ class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View)
     def get(self, request, *args, **kwargs):
         # pylint: disable=unused-argument
         print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
-        print_requests_files = PrintRequestFile.objects.filter(Q(print_request_id=print_request.pk) &
+        print_requests_files = PrintRequestFile.objects.filter(Q(print_request=print_request.pk) &
                                                                Q(is_deleted=False))
         form = printer_forms.StaffPrintRequestForm(instance=print_request)
         if print_request:
@@ -170,18 +172,29 @@ class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View)
     def post(self, request, *args, **kwargs):
         # pylint: disable=unused-argument
         print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
-        print_requests_files = PrintRequestFile.objects.filter(Q(print_request_id=print_request.pk) &
+        print_requests_files = PrintRequestFile.objects.filter(Q(print_request=print_request.pk) &
                                                                Q(is_deleted=False))
         form = printer_forms.StaffPrintRequestForm(self.request.POST, instance=print_request)
         if form.is_valid():
             form.instance.status = PrintRequest.STATUS.get_value('printed')
             price = Price.objects.latest('wef')
-            form.instance.printed_on = datetime.datetime.now()
-            form.instance.amount = (form.instance.no_of_bnw_page * price.bnw_page +
-                                    form.instance.no_of_color_page * price.color_pages +
-                                    (form.instance.no_of_page +
-                                     form.instance.no_of_front_page +
-                                     form.instance.no_of_blank_page) * price.page)
+            form.instance.printed_on = timezone.now()
+
+            price = (
+                form.instance.no_of_bnw_page * price.bnw_page +
+                form.instance.no_of_color_page * price.color_pages +
+                (
+                    form.instance.no_of_page +
+                    form.instance.no_of_front_page +
+                    form.instance.no_of_blank_page
+                ) * price.page
+            )
+
+            if bool(price):
+                form.instance.amount = price
+            else:
+                form.instance.amount = 1
+
             form.save()
             return redirect('printer:staff_print_request_list')
         else:
