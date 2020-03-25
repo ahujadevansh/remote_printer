@@ -6,7 +6,8 @@ app_name = 'printer'
 urlpatterns = [
 
     path('print-request-create/', printer_views.PrintRequestCreateView.as_view(), name='print_request_create'),
-    path('user-print-request-list/', printer_views.UserPrintRequestListView.as_view(), name='user_print_request_list'),
+    path('user-print-request-list/<str:status>/', printer_views.UserPrintRequestListView.as_view(),
+         name='user_print_request_list'),
     path('user-print-request/<int:pk>/', printer_views.UserPrintRequestDetailView.as_view(),
          name='user_print_request_detail'),
     path('print-request-delete/<int:pk>/', printer_views.PrintRequestSoftDeleteView.as_view(),
@@ -18,7 +19,8 @@ urlpatterns = [
     path('print-request-reapply/<int:pk>/', printer_views.PrintRequestReapplyView.as_view(),
          name='print_request_reapply'),
 
-    path('staff-print-request-list/', printer_views.StaffPrintRequestListView.as_view(), name='staff_print_request_list'),
+    path('staff-print-request-list/<str:status>/', printer_views.StaffPrintRequestListView.as_view(),
+         name='staff_print_request_list'),
     path('staff-print-request/<int:pk>/', printer_views.StaffPrintRequestDetailView.as_view(),
          name='staff_print_request_detail'),
 ]

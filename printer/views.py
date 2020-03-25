@@ -94,7 +94,9 @@ class UserPrintRequestListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = get_object_or_404(CustomUser, id=self.request.user.pk)
-        return PrintRequest.objects.filter(Q(client=user) & Q(is_deleted=False)).order_by('-created_at')
+        status = PrintRequest.STATUS.get_value(self.kwargs.get('status'))
+        return PrintRequest.objects.filter(Q(client=user) & Q(status=status) &
+                                           Q(is_deleted=False)).order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         # pylint: disable=arguments-differ
@@ -102,6 +104,7 @@ class UserPrintRequestListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['sidebarSection'] = 'user_print_request_list'
+        context['status'] = self.kwargs.get('status')
         return context
 
 class UserPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -136,12 +139,17 @@ class StaffPrintRequestListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
     context_object_name = 'prints'
     paginate_by = 20
 
+    def get_queryset(self):
+        status = PrintRequest.STATUS.get_value(self.kwargs.get('status'))
+        return PrintRequest.objects.filter(status=status).order_by('-created_at')
+
     def get_context_data(self, **kwargs):
         # pylint: disable=arguments-differ
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['sidebarSection'] = 'staff_print_request_list'
+        context['status'] = self.kwargs.get('status')
         return context
 
     def test_func(self):
@@ -156,10 +164,12 @@ class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View)
     def get(self, request, *args, **kwargs):
         # pylint: disable=unused-argument
         print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
-        print_requests_files = PrintRequestFile.objects.filter(Q(print_request=print_request.pk) &
-                                                               Q(is_deleted=False))
-        form = printer_forms.StaffPrintRequestForm(instance=print_request)
         if print_request:
+            print_requests_files = PrintRequestFile.objects.filter(Q(print_request=print_request.pk) &
+                                                                   Q(is_deleted=False)
+                                                                   )
+            form = printer_forms.StaffPrintRequestForm(instance=print_request)
+
             context = {'print_request': print_request,
                        'print_requests_files': print_requests_files,
                        'form': form,
@@ -175,28 +185,33 @@ class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View)
         print_requests_files = PrintRequestFile.objects.filter(Q(print_request=print_request.pk) &
                                                                Q(is_deleted=False))
         form = printer_forms.StaffPrintRequestForm(self.request.POST, instance=print_request)
+
         if form.is_valid():
-            form.instance.status = PrintRequest.STATUS.get_value('printed')
-            price = Price.objects.latest('wef')
-            form.instance.printed_on = timezone.now()
 
-            price = (
-                form.instance.no_of_bnw_page * price.bnw_page +
-                form.instance.no_of_color_page * price.color_pages +
-                (
-                    form.instance.no_of_page +
-                    form.instance.no_of_front_page +
-                    form.instance.no_of_blank_page
-                ) * price.page
-            )
+            if print_request.status in (1, 2):
+                form.instance.status = PrintRequest.STATUS.get_value('printed')
+                price = Price.objects.latest('wef')
+                form.instance.printed_on = timezone.now()
 
-            if bool(price):
-                form.instance.amount = price
+                price = (
+                    form.instance.no_of_bnw_page * price.bnw_page +
+                    form.instance.no_of_color_page * price.color_pages +
+                    (
+                        form.instance.no_of_page +
+                        form.instance.no_of_front_page +
+                        form.instance.no_of_blank_page
+                    ) * price.page
+                )
+
+                if bool(price):
+                    form.instance.amount = price
+                else:
+                    form.instance.amount = 1
+
+                form.save()
+                return redirect('printer:staff_print_request_list', status='printed')
             else:
-                form.instance.amount = 1
-
-            form.save()
-            return redirect('printer:staff_print_request_list')
+                return HttpResponse("<h1>404</h1>")
         else:
             context = {'print_request': print_request,
                        'print_requests_files': print_requests_files,
@@ -205,7 +220,6 @@ class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View)
                       }
             return render(request, self.template_name, context)
 
-        return HttpResponse("<h1>404</h1>")
 
 
     def test_func(self):
@@ -244,6 +258,7 @@ class PrintRequestCancelView(LoginRequiredMixin, UserPassesTestMixin, View):
         print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
         if print_request.status == 1:
             print_request.status = print_request.STATUS.get_value("cancelled")
+            print_request.cancelled_on = timezone.now()
             print_request.save()
             messages.info(request, "Your print request has been cancelled deleted")
         else:
@@ -263,11 +278,11 @@ class PrintRequestRejectView(LoginRequiredMixin, UserPassesTestMixin, View):
         print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
         if print_request.status == 1:
             print_request.status = print_request.STATUS.get_value("rejected")
+            print_request.rejected_on = timezone.now()
             print_request.save()
-            messages.info(request, "Your print request has been rejected")
         else:
             messages.error(request, "Your print request cannot be rejected")
-        return redirect(print_request)
+        return redirect('printer:staff_print_request_list', status='rejected')
 
     def test_func(self):
         if self.request.user.user_type == self.request.user.UserType.get_value("staff"):
@@ -279,7 +294,7 @@ class PrintRequestReapplyView(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(self, request, *args, **kwargs):
         # pylint: disable=unused-argument
         print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
-        if print_request.status == 4:
+        if print_request.status in (3, 4):
             print_request.status = print_request.STATUS.get_value("requested")
             print_request.save()
             messages.info(request, "Your print request has been re applied")

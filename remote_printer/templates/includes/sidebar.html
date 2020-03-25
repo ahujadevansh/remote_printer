@@ -42,12 +42,12 @@
             </a>
           </li>
 
-        {% if sidebarSection == "user_print_request_list" %}
+        {% if sidebarSection == "staff_print_request_list" %}
           <li class="sidebar-item active">
         {% else %}
           <li class="sidebar-item">
         {% endif %}
-            <a href="{% url 'printer:staff_print_request_list' %}">
+            <a href="{% url 'printer:staff_print_request_list' 'requested' %}">
               <i class="fas fa-tasks"></i>
               <span>Print Requests</span>
             </a>
@@ -81,7 +81,7 @@
         {% else %}
           <li class="sidebar-item">
         {% endif %}
-            <a href="{% url 'printer:user_print_request_list' %}">
+            <a href="{% url 'printer:user_print_request_list' 'requested' %}">
               <i class="fa fa-calendar"></i>
               <span>My Prints</span>
             </a>
