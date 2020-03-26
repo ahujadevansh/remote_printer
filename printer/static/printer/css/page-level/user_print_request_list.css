@@ -2,20 +2,34 @@
 .table td {
   text-align: center;
 }
+.table-hover tbody tr:hover td {
+  background: #ccffff;
+}
+.project-tab {
+  background-color: white;
+  padding: 10px;
+  border-radius: 2rem;
+}
 
 .project-tab .tab {
   font-size: 1rem;
   line-height: 1.5;
-  border-radius: 0.25rem;
+  border-radius: 2rem;
   border: 3px solid transparent;
   margin-left: 0.3rem;
   text-align: center !important;
   vertical-align: middle;
+  padding: 0.25rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 .tab:hover {
   text-decoration: none;
-  border-bottom: 3px solid green;
+  border: 3px solid green;
+  cursor: pointer;
+}
+
+.project-tab .tab.active:hover{
+  color: white;
 }
 
 .project-tab .tab.active{
@@ -23,3 +37,4 @@
   background-color: green;
   color: white;
 }
+
