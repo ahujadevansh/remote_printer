@@ -51,7 +51,7 @@ class PrintRequest(MetaDataModel):
         return self.client.email
 
     def get_absolute_url(self):
-        return reverse("printer:user_print_request_list")
+        return reverse("printer:user_print_request_list", kwargs={'status':'requested'})
 
 
 class PrintRequestFile(MetaDataModel):

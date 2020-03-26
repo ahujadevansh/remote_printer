@@ -54,7 +54,7 @@
                 {% if print.status == 1 %}
                   <a href="{% url 'printer:print_request_cancel' print.pk %}" class="btn btn-warning mx-1 mb-1" >Cancel</a>
                 {% endif %}
-                {% if print.status == 4 %}
+                {% if print.status == 4 or print.status == 3 %}
                   <a href="{% url 'printer:print_request_reapply' print.pk %}" class="btn btn-info mx-1 mb-1" >Re apply</a>
                 {% endif %}
                 {% if print.status == 3 or print.status == 4 or print.status == 5 %}

@@ -87,7 +87,7 @@ class UserPrintRequestListView(LoginRequiredMixin, ListView):
     template_name = 'printer/user_print_request_list_table.html'
     model = PrintRequest
     context_object_name = 'prints'
-
+    flag = 1
     def get_queryset(self):
         user = get_object_or_404(CustomUser, id=self.request.user.pk)
         status = PrintRequest.STATUS.get_value(self.kwargs.get('status', 'requested'))
@@ -98,11 +98,10 @@ class UserPrintRequestListView(LoginRequiredMixin, ListView):
         # pylint: disable=arguments-differ
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        status = self.kwargs.get('status')
-        if not status:
+        status = self.kwargs.get('status', 'requested')
+        if self.flag:
             self.template_name = 'printer/user_print_request_list.html'
-            status = 'requested'
-        context['sidebarSection'] = 'user_print_request_list'
+            context['sidebarSection'] = 'user_print_request_list'
         context['status'] = status
         return context
 
@@ -167,7 +166,7 @@ class PrintRequestCancelView(LoginRequiredMixin, UserPassesTestMixin, View):
             messages.info(request, "Your print request has been cancelled deleted")
         else:
             messages.error(request, "Your print request cannot be cancelled")
-        return redirect(print_request)
+        return redirect('printer:user_print_request_list', status='cancelled')
 
     def test_func(self):
         print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
