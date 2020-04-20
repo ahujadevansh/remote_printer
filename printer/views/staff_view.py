@@ -26,23 +26,30 @@ from printer.models import PrintRequest, PrintRequestFile, Price
 
 class StaffPrintRequestListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
-    template_name = 'printer/staff_print_request_list.html'
+    template_name = 'printer/staff_print_request_list_table.html'
     model = PrintRequest
     context_object_name = 'prints'
-    paginate_by = 20
+    flag = 1
+
 
     def get_queryset(self):
-        status = PrintRequest.STATUS.get_value(self.kwargs.get('status'))
-        return PrintRequest.objects.filter(Q(status=status) &
+        status = self.kwargs.get('status', 'requested')
+        if status == 'deleted':
+            return PrintRequest.objects.filter(Q(is_deleted=True)).order_by('-created_at')
+        else:
+            status = PrintRequest.STATUS.get_value(status)
+            return PrintRequest.objects.filter(Q(status=status) &
                                            Q(is_deleted=False)).order_by('-created_at')
+
 
     def get_context_data(self, **kwargs):
         # pylint: disable=arguments-differ
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['sidebarSection'] = 'staff_print_request_list'
-        context['status'] = self.kwargs.get('status')
+        if self.flag:
+            self.template_name = 'printer/staff_print_request_list.html'
+            context['sidebarSection'] = 'staff_print_request_list'
+        context['status'] = self.kwargs.get('status', 'requested')
         return context
 
     def test_func(self):
@@ -133,6 +140,26 @@ class PrintRequestRejectView(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             messages.error(request, "Your print request cannot be rejected")
         return redirect('printer:staff_print_request_list', status='rejected')
+
+    def test_func(self):
+        if self.request.user.user_type == self.request.user.UserType.get_value("staff"):
+            return True
+        return False
+
+class PrintRequestDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        # pylint: disable=unused-argument
+        print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
+        if print_request.is_deleted:
+            print_requests_files = PrintRequestFile.objects.filter(print_request=self.kwargs.get('pk'))
+            for print_requests_file in print_requests_files:
+                print_requests_file.delete()
+            print_request.delete()
+            messages.info(request, "Your print request has been successfully deleted")
+        else:
+            messages.error(request, "Your print request cannot be deleted")
+        return redirect('printer:staff_print_request_list', status='deleted')
 
     def test_func(self):
         if self.request.user.user_type == self.request.user.UserType.get_value("staff"):

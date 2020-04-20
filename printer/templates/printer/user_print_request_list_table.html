@@ -19,16 +19,16 @@
           <tr>
             <th>Srno.</th>
             {% if status == 'requested' %}
-                <th>Date of Request</th>
-              {% elif status == 'printed' %}
-                <th>Date of Print</th>
-              {% elif status == 'cancelled' %}
-                <th>Date of Cancel</th>
-              {% elif status == 'rejected' %}
-                <th>Date of Reject</th>
-              {% elif status == 'paid' %}
-                <th>Date of Payment</th>
-              {% endif %}
+              <th>Date of Request</th>
+            {% elif status == 'printed' %}
+              <th>Date of Print</th>
+            {% elif status == 'cancelled' %}
+              <th>Date of Cancel</th>
+            {% elif status == 'rejected' %}
+              <th>Date of Reject</th>
+            {% elif status == 'paid' %}
+              <th>Date of Payment</th>
+            {% endif %}
             <th>Amount</th>
             <th>Action</th>
           </tr>
@@ -69,4 +69,4 @@
   </div>
 </div>
 
-<script src="{% static 'printer/js/page-level/user_print_request_list.js' %}"></script>
+<script src="{% static 'printer/js/page-level/ajax_print_request_list.js' %}"></script>

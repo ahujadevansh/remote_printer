@@ -88,6 +88,7 @@ class UserPrintRequestListView(LoginRequiredMixin, ListView):
     model = PrintRequest
     context_object_name = 'prints'
     flag = 1
+
     def get_queryset(self):
         user = get_object_or_404(CustomUser, id=self.request.user.pk)
         status = PrintRequest.STATUS.get_value(self.kwargs.get('status', 'requested'))
@@ -98,11 +99,10 @@ class UserPrintRequestListView(LoginRequiredMixin, ListView):
         # pylint: disable=arguments-differ
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        status = self.kwargs.get('status', 'requested')
         if self.flag:
             self.template_name = 'printer/user_print_request_list.html'
             context['sidebarSection'] = 'user_print_request_list'
-        context['status'] = status
+        context['status'] = self.kwargs.get('status', 'requested')
         return context
 
 

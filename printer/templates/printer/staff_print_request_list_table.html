@@ -1,0 +1,73 @@
+{% load static %}
+{% load humanize %}
+<div class="card rounded-lg">
+  <div class="card-header">
+    <h2>Print Details</h2>
+    <div class="project-tab row mx-auto">
+      <a data-url="{% url 'printer:staff_print_request_list_table' 'requested' %}" class="change-status tab col-md-2 text-center {% if status == 'requested' %}active{% endif %}">Pending</a>
+      <a data-url="{% url 'printer:staff_print_request_list_table' 'printed' %}" class="change-status tab col-md-2 text-center {% if status == 'printed' %}active{% endif %}">Printed</a>
+      <a data-url="{% url 'printer:staff_print_request_list_table' 'rejected' %}" class="change-status tab col-md-2 text-center {% if status == 'rejected' %}active{% endif %}">Rejected</a>
+      <a data-url="{% url 'printer:staff_print_request_list_table' 'cancelled' %}" class="change-status tab col-md-2 text-center {% if status == 'cancelled' %}active{% endif %}">Cancelled</a>
+      <a data-url="{% url 'printer:staff_print_request_list_table' 'paid' %}" class="change-status tab col-md-2 text-center {% if status == 'paid' %}active{% endif %}">Paid</a>
+      <a data-url="{% url 'printer:staff_print_request_list_table' 'deleted' %}" class="change-status tab col-md-2 text-center {% if status == 'deleted' %}active{% endif %}">Deleted</a>
+    </div>
+  </div>
+
+  <div class="card-body border-lg">
+    <div class="table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl">
+      <table class="table table-striped border table-hover mt-1" >
+        <thead class="">
+          <tr>
+            <th scope="col">Request Id</th>
+            <th scope="col">Client</th>
+            {% if status == 'requested' %}
+              <th scope="col">Requested On</th>
+            {% elif status == 'printed' %}
+              <th scope="col">Printed On</th>
+            {% elif status == 'cancelled' %}
+              <th scope="col">Cancelled On</th>
+            {% elif status == 'rejected' %}
+              <th scope="col">Rejected On</th>
+            {% elif status == 'paid' %}
+              <th scope="col">Paid On</th>
+            {% endif %}
+            <th scope="col">Amount</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for print in prints %}
+            <tr>
+              <td>{{ print.pk }}</td>
+              <td><a href="{% url 'printer:staff_print_request_detail' print.pk %}">{{ print.client }}</a></td>
+              {% if status == 'requested' %}
+                <td>{{ print.created_at|naturalday }}</td>
+              {% elif status == 'printed' %}
+                <td>{{ print.printed_on|default:"Not Yet"|naturalday }}</td>
+              {% elif status == 'cancelled' %}
+                <td>{{ print.cancelled_on|default:"Not Yet"|naturalday }}</td>
+              {% elif status == 'rejected' %}
+                <td>{{ print.rejected_on|default:"Not Yet"|naturalday }}</td>
+              {% elif status == 'paid' %}
+                <td>{{ print.paid_on|default:"Not Yet"|naturalday }}</td>
+              {% endif %}
+              <td>{{ print.amount|default:"Not Yet" }}</td>
+              <td>
+                {% if print.status == 1 %}
+                  <a href="{% url 'printer:print_request_reject' print.pk %}" class="btn btn-warning mx-1 mb-1" >Reject</a>
+                {% endif %}
+                {% if print.is_deleted %}
+                  {% if print.status == 3 or print.status == 4 or print.status == 5 %}
+                    <a href="{% url 'printer:print_request_permanent_delete' print.pk %}" class="btn btn-danger mx-1 mb-1" >Delete</a>
+                  {% endif %}
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'printer/js/page-level/ajax_print_request_list.js' %}"></script>
