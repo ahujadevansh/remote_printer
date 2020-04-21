@@ -63,7 +63,7 @@ class PrintRequestFile(MetaDataModel):
         if len(basefilename) > 101:
             basefilename = basefilename[:101]
         return 'print/{client_id}/{print_request_id}/{basename}_{random_string}{ext}'.format(
-            client_id=self.print_request.client.pk, print_request_id=self.print_request,
+            client_id=self.print_request.client.pk, print_request_id=self.print_request.pk,
             basename=basefilename, random_string=randomstr, ext=file_extension)
 
 
