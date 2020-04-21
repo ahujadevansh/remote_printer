@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Sum
@@ -33,3 +33,28 @@ class HomeView(LoginRequiredMixin, TemplateView):
             'unpaid': unpaid,
             }
         return render(request, self.template_name, context)
+
+
+def bad_request_view(request, *args, **kwargs):
+    # pylint: disable=unused-argument
+    response = render_to_response("400.html")
+    response.status_code = 400
+    return response
+
+def page_not_found_view(request, *args, **kwargs):
+    # pylint: disable=unused-argument
+    response = render_to_response("404.html")
+    response.status_code = 404
+    return response
+
+def permission_denied_view(request, *args, **kwargs):
+    # pylint: disable=unused-argument
+    response = render_to_response("403.html")
+    response.status_code = 403
+    return response
+
+def error_view(request, *args, **kwargs):
+    # pylint: disable=unused-argument
+    response = render_to_response("500.html")
+    response.status_code = 500
+    return response

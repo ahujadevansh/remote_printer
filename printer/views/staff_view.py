@@ -1,5 +1,7 @@
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 # pylint: disable=unused-import
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
+from django.http import Http404
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
@@ -39,7 +41,7 @@ class StaffPrintRequestListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
         else:
             status = PrintRequest.STATUS.get_value(status)
             return PrintRequest.objects.filter(Q(status=status) &
-                                           Q(is_deleted=False)).order_by('-created_at')
+                                               Q(is_deleted=False)).order_by('-created_at')
 
 
     def get_context_data(self, **kwargs):
@@ -55,7 +57,8 @@ class StaffPrintRequestListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
     def test_func(self):
         if self.request.user.user_type == self.request.user.UserType.get_value("staff"):
             return True
-        return False
+        raise PermissionDenied()
+        # return False
 
 class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
 
@@ -125,7 +128,8 @@ class StaffPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View)
     def test_func(self):
         if self.request.user.user_type == self.request.user.UserType.get_value("staff"):
             return True
-        return False
+        raise PermissionDenied()
+        # return False
 
 
 class PrintRequestRejectView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -144,7 +148,8 @@ class PrintRequestRejectView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         if self.request.user.user_type == self.request.user.UserType.get_value("staff"):
             return True
-        return False
+        raise PermissionDenied()
+        # return False
 
 class PrintRequestDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
 
@@ -164,4 +169,5 @@ class PrintRequestDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         if self.request.user.user_type == self.request.user.UserType.get_value("staff"):
             return True
-        return False
+        raise PermissionDenied()
+        # return False

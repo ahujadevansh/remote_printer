@@ -5,7 +5,7 @@ from .base import *  # noqa
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = True
+DEBUG = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = "wPY7XuC0d415HKKiUUXUIGdeGwGv4yNwjaIAFDBFDsWBofHvfTytoC26DfInPN7p",
 

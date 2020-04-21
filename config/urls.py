@@ -21,6 +21,11 @@ from django.contrib.auth import views as auth_views
 from django.views.generic import RedirectView
 from core import views as core_views
 
+handler400 = 'core.views.bad_request_view'
+handler404 = 'core.views.page_not_found_view'
+handler403 = 'core.views.permission_denied_view'
+handler500 = 'core.views.error_view'
+
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
@@ -31,7 +36,7 @@ urlpatterns = [
         auth_views.PasswordResetView.as_view(),
         name='admin_password_reset',
     ),
-        path('password-reset/done',
+    path('password-reset/done',
          auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'),
          name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/',

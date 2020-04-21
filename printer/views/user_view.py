@@ -1,5 +1,7 @@
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 # pylint: disable=unused-import
+from django.http import Http404
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
@@ -16,6 +18,7 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.utils.html import strip_tags
+
 
 from remote_printer.users.models import CustomUser
 
@@ -112,23 +115,26 @@ class UserPrintRequestDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
 
     def get(self, request, *args, **kwargs):
         # pylint: disable=unused-argument
-        print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
-        print_requests_files = PrintRequestFile.objects.filter(Q(print_request=print_request.pk) &
-                                                               Q(is_deleted=False))
-        if print_request:
-            context = {'print_request': print_request,
-                       'print_requests_files': print_requests_files
-                      }
-            return render(request, self.template_name, context)
+        try:
+            print_request = PrintRequest.objects.filter(Q(pk=self.kwargs.get('pk')) & Q(is_deleted=False)).first()
+            print_requests_files = PrintRequestFile.objects.filter(Q(print_request=print_request.pk) &
+                                                                   Q(is_deleted=False))
+            if print_request:
+                context = {'print_request': print_request,
+                           'print_requests_files': print_requests_files
+                          }
+                return render(request, self.template_name, context)
+        except PrintRequest.DoesNotExist:
+            raise Http404("PrintRequest does not exist")
 
-        return HttpResponse("<h1>404</h1>")
 
 
     def test_func(self):
         print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
         if print_request.client == self.request.user:
             return True
-        return False
+        raise PermissionDenied()
+        # return False
 
 
 class PrintRequestSoftDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -152,7 +158,8 @@ class PrintRequestSoftDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
         print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
         if print_request.client == self.request.user:
             return True
-        return False
+        raise PermissionDenied()
+        # return False
 
 class PrintRequestCancelView(LoginRequiredMixin, UserPassesTestMixin, View):
 
@@ -172,7 +179,8 @@ class PrintRequestCancelView(LoginRequiredMixin, UserPassesTestMixin, View):
         print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
         if print_request.client == self.request.user:
             return True
-        return False
+        raise PermissionDenied()
+        # return False
 
 
 class PrintRequestReapplyView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -193,4 +201,5 @@ class PrintRequestReapplyView(LoginRequiredMixin, UserPassesTestMixin, View):
         print_request = get_object_or_404(PrintRequest, pk=self.kwargs.get('pk'))
         if print_request.client == self.request.user:
             return True
-        return False
+        raise PermissionDenied()
+        # return False
